@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>SmarterLink Protocol Specification | SmarterLink Documentation </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="SmarterLink Protocol Specification | SmarterLink Documentation ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/YvesConanDeliverables/SmarterLink-DotNet/blob/yc-documentation-experiments/docs/static/specs/smarterlink-protocol.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="SmarterLink Documentation">
+            SmarterLink Documentation
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="smarterlink-protocol-specification">SmarterLink Protocol Specification</h1>
+
+<p><strong>Status:</strong> Draft (pre-release, protocol version 0)
+<strong>Library version:</strong> 1.0.0-alpha-07</p>
+<hr>
+<h2 id="1-overview">1. Overview</h2>
+<p>SmarterLink is a publish/subscribe messaging protocol for distributed communication in industrial manufacturing environments. It defines how participants (devices and software systems with distinct roles) exchange events and data over MQTT.</p>
+<p>SmarterLink deliberately avoids MQTT 5 features to ensure compatibility with a wide range of brokers.</p>
+<hr>
+<h2 id="2-participants">2. Participants</h2>
+<h3 id="21-identity">2.1 Identity</h3>
+<p>Every SmarterLink participant has a <strong>Participant ID</strong>: a plain string that must be unique across the entire SmarterLink network (all sites). The Participant ID appears in MQTT topic paths and must not contain MQTT reserved characters (<code>/</code>, <code>+</code>, <code>#</code>, <code>$</code>).</p>
+<h3 id="22-roles">2.2 Roles</h3>
+<p>Every participant is assigned a <strong>Role</strong> that describes its function in the system. Four canonical roles are defined:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Topic Segment</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data Producer</td>
+<td><code>producers</code></td>
+<td>Acquires and publishes production data (images, measurements, etc.)</td>
+</tr>
+<tr>
+<td>Data Processor</td>
+<td><code>processors</code></td>
+<td>Consumes and processes data from producers, publishes results</td>
+</tr>
+<tr>
+<td>Data Store</td>
+<td><code>store</code></td>
+<td>Persists data and serves files to other participants</td>
+</tr>
+<tr>
+<td>Human-Machine Interface</td>
+<td><code>hmi</code></td>
+<td>Displays information and interacts with operators</td>
+</tr>
+</tbody>
+</table>
+<p>Custom roles are permitted but carry no standard event definitions.</p>
+<hr>
+<h2 id="3-transport">3. Transport</h2>
+<h3 id="31-mqtt">3.1 MQTT</h3>
+<p>SmarterLink is designed to work with MQTT 3.1.1. The protocol deliberately avoids MQTT 5 features to ensure broad broker compatibility.</p>
+<h3 id="32-topic-hierarchy">3.2 Topic Hierarchy</h3>
+<p>SmarterLink topics follow the Universal Namespace (UNS) convention:</p>
+<pre><code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/&lt;role&gt;/&lt;participant-id&gt;/&lt;event-name&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>smarter-link</code></td>
+<td>Fixed protocol root identifier</td>
+</tr>
+<tr>
+<td>2</td>
+<td>site</td>
+<td>Site or facility identifier</td>
+</tr>
+<tr>
+<td>3</td>
+<td>area</td>
+<td>Area within the site</td>
+</tr>
+<tr>
+<td>4</td>
+<td>sub-area</td>
+<td>Sub-area within the area</td>
+</tr>
+<tr>
+<td>5</td>
+<td>station</td>
+<td>Station</td>
+</tr>
+<tr>
+<td>6</td>
+<td>role</td>
+<td>Role segment (see §2.2), or <code>_</code> if not applicable</td>
+</tr>
+<tr>
+<td>7</td>
+<td>participant-id</td>
+<td>Publishing participant's ID prefixed with <code>~</code> (e.g. <code>~cam-01</code>), or <code>_</code> if not applicable</td>
+</tr>
+<tr>
+<td>8</td>
+<td>event-name</td>
+<td>Event name in kebab-case</td>
+</tr>
+</tbody>
+</table>
+<p>When a level is not applicable to a particular event it is set to <code>_</code> rather than omitted. All topics therefore always have exactly 8 levels, which makes subscription filter construction predictable.</p>
+<p><strong>Example:</strong></p>
+<pre><code>smarter-link/site-x/area-1/sub-1/station-a/producers/~cam-01/component-image-acquired
+</code></pre>
+<h3 id="33-segment-constraints">3.3 Segment Constraints</h3>
+<p>Topic segments must not contain <code>/</code>, <code>+</code>, <code>#</code>, or <code>$</code>. Participant IDs must be unique across the entire network, not just within a single station.</p>
+<p>Two characters are reserved as segment-type indicators:</p>
+<table>
+<thead>
+<tr>
+<th>Character</th>
+<th>Reserved for</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>~</code></td>
+<td>Participant ID segments</td>
+<td><code>~cam-01</code></td>
+</tr>
+<tr>
+<td><code>:</code></td>
+<td>File descriptor segments</td>
+<td><code>fs:00</code>, <code>fr:99</code></td>
+</tr>
+</tbody>
+</table>
+<p>Other segments (site, area, sub-area, station, role, event name) should avoid these characters.</p>
+<hr>
+<h2 id="4-message-format">4. Message Format</h2>
+<p>All SmarterLink messages, except raw file transfer chunks, are JSON objects.</p>
+<h3 id="41-envelope">4.1 Envelope</h3>
+<p>Every message has two required top-level fields:</p>
+<pre><code class="lang-json">{
+  &quot;header&quot;: { ... },
+  &quot;payload&quot;: { ... }
+}
+</code></pre>
+<h3 id="42-header">4.2 Header</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>payloadType</code></td>
+<td>string</td>
+<td>yes</td>
+<td>Simple type name of the payload (e.g. <code>&quot;ActiveJobUpdated&quot;</code>). Used by receivers to select the correct deserialization type.</td>
+</tr>
+<tr>
+<td><code>monotonicCounter</code></td>
+<td>integer (int64)</td>
+<td>no</td>
+<td>A value that increases with each successive message from a given sender. May be a UTC timestamp (e.g. .NET ticks since Unix epoch) or a simple counter. Used to determine relative message order.</td>
+</tr>
+<tr>
+<td><code>protocolRevision</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>Integer revision number of the SmarterLink protocol. Each stable protocol release maps to a specific revision number (see §9.1). Current value: <code>0</code> (pre-release).</td>
+</tr>
+<tr>
+<td><code>userData</code></td>
+<td>string</td>
+<td>no</td>
+<td>Optional application-defined string. Passed through the protocol without interpretation.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-payload">4.3 Payload</h3>
+<p>Every payload carries a <code>version</code> field for independent schema evolution. All remaining fields are event-specific.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>Schema version of this payload type.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-serialization">4.4 Serialization</h3>
+<ul>
+<li>All JSON property names are camelCase.</li>
+<li><code>JobId</code>, <code>ComponentId</code>, and <code>ParticipantId</code> serialize as plain strings.</li>
+<li><code>Location</code> serializes as a URI string.</li>
+<li><code>HashingFunction</code> serializes as a string identifier (e.g. <code>SHA-256</code>). Supported values are defined in the <a href="file-transfer-protocol.html">SmarterLink File Transfer Protocol</a>.</li>
+<li>Required fields must always be present. Absent optional fields are treated as null by receivers.</li>
+</ul>
+<h3 id="45-example">4.5 Example</h3>
+<pre><code class="lang-json">{
+  &quot;header&quot;: {
+    &quot;payloadType&quot;: &quot;ActiveJobUpdated&quot;,
+    &quot;monotonicCounter&quot;: 638765432100000000,
+    &quot;protocolRevision&quot;: 0,
+    &quot;userData&quot;: null
+  },
+  &quot;payload&quot;: {
+    &quot;version&quot;: 1,
+    &quot;jobId&quot;: &quot;job-2024-001&quot;
+  }
+}
+</code></pre>
+<hr>
+<h2 id="5-core-data-types">5. Core Data Types</h2>
+<h3 id="51-identifiers">5.1 Identifiers</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Wire Format</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ParticipantId</code></td>
+<td>string</td>
+<td>Must be unique network-wide; no <code>/</code>, <code>+</code>, <code>#</code>, <code>$</code></td>
+</tr>
+<tr>
+<td><code>JobId</code></td>
+<td>string</td>
+<td>Can be used to correlate SmarterLink payloads with external job management systems.</td>
+</tr>
+<tr>
+<td><code>ComponentId</code></td>
+<td>string</td>
+<td>Can be used to correlate SmarterLink payloads with external Component/Part/CAD management systems.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-location">5.2 Location</h3>
+<p>A <code>Location</code> is a URI string that references a resource accessible by SmarterLink Participants.</p>
+<p>All URI schemes are permitted, however SmarterLink leaves it the the Participants to work out how to use the URIs.</p>
+<h4 id="521-smarterlink-file-transfer-locations">5.2.1 SmarterLink File Transfer Locations</h4>
+<p>SmarterLink provides an optional protocol for File Transfers overt MQTT.</p>
+<p>File locations in the protocol use the <code>smarterlink://</code> scheme (see §8.2).</p>
+<h3 id="53-jobconfig">5.3 JobConfig</h3>
+<p>A <code>JobConfig</code> is a free-form JSON object (<code>{ &quot;key&quot;: value, ... }</code>) carrying job-specific parameters. Its schema is entirely application-defined. It is typically published out-of-band (e.g. via an application-defined custom payload or a side-channel) rather than as a standard SmarterLink event.</p>
+<hr>
+<h2 id="6-standard-events">6. Standard Events</h2>
+<h3 id="61-job-events">6.1 Job Events</h3>
+<p>Job events are scoped to a station, not to a specific participant. Both the role and participant-id levels are <code>_</code>.</p>
+<p><strong>Topic pattern:</strong> <code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/_/_/&lt;event-name&gt;</code></p>
+<hr>
+<h4 id="activejobupdated"><code>activeJobUpdated</code></h4>
+<p>Signals that the active job for a station has changed.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td>JobId</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="jobfileavailable"><code>jobFileAvailable</code></h4>
+<p>Signals that a file associated with a job (e.g. a recipe or configuration) is available for download.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td>JobId</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>fileId</code></td>
+<td>string</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Location</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="62-data-producer-events">6.2 Data Producer Events</h3>
+<p>Published by Data Producer participants. The participant-id level identifies the specific producer.</p>
+<p><strong>Topic pattern:</strong> <code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/producers/~&lt;participant-id&gt;/&lt;event-name&gt;</code></p>
+<hr>
+<h4 id="componentimageacquired"><code>componentImageAcquired</code></h4>
+<p>Signals that an image of a component has been acquired and is available for download.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>componentId</code></td>
+<td>ComponentId</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>fileId</code></td>
+<td>string</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Location</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td>JobId</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="userinformationacquired"><code>userInformationAcquired</code></h4>
+<p>Carries operator-entered or operator-associated information for a component.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>componentId</code></td>
+<td>ComponentId</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>fileId</code></td>
+<td>string</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Location</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td>JobId</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>information</code></td>
+<td>Mapping (string → string)</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="inspectionsystemstatusacquired"><code>inspectionSystemStatusAcquired</code></h4>
+<p>Reports status information from a Data Producer participant.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>participantId</code></td>
+<td>ParticipantId</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>information</code></td>
+<td>Mapping (string → string)</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="63-data-processor-events">6.3 Data Processor Events</h3>
+<p>Published by Data Processor participants.</p>
+<p><strong>Topic pattern:</strong> <code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/processors/~&lt;participant-id&gt;/&lt;event-name&gt;</code></p>
+<hr>
+<h4 id="componentanalysisupdated"><code>componentAnalysisUpdated</code></h4>
+<p>Signals that analysis results for a component are available.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>componentId</code></td>
+<td>ComponentId</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>fileId</code></td>
+<td>string</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Location</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td>JobId</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="componentreportupdated"><code>componentReportUpdated</code></h4>
+<p>Signals that a consolidated report for a component has been updated.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>componentId</code></td>
+<td>ComponentId</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>fileId</code></td>
+<td>string</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Location</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td>JobId</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="7-subscriptions">7. Subscriptions</h2>
+<p>Participants subscribe using MQTT topic filters. Standard MQTT wildcard characters apply:</p>
+<ul>
+<li><code>+</code>: matches exactly one topic level</li>
+<li><code>#</code>: matches the remainder of the topic from that level onward (must be last)</li>
+</ul>
+<p>Common subscription patterns:</p>
+<table>
+<thead>
+<tr>
+<th>Intent</th>
+<th>Filter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All job events at a station</td>
+<td><code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/_/_/+</code></td>
+</tr>
+<tr>
+<td>Specific job event</td>
+<td><code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/_/_/&lt;event-name&gt;</code></td>
+</tr>
+<tr>
+<td>Specific Data Producer event from any producer</td>
+<td><code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/producers/+/&lt;event-name&gt;</code></td>
+</tr>
+<tr>
+<td>All events from a specific producer</td>
+<td><code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/producers/~&lt;participant-id&gt;/+</code></td>
+</tr>
+<tr>
+<td>All events from all producers</td>
+<td><code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/producers/#</code></td>
+</tr>
+<tr>
+<td>All events from all processors</td>
+<td><code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/processors/#</code></td>
+</tr>
+<tr>
+<td>All events at a station</td>
+<td><code>smarter-link/&lt;site&gt;/&lt;area&gt;/&lt;sub-area&gt;/&lt;station&gt;/#</code></td>
+</tr>
+<tr>
+<td>All SmarterLink events site-wide</td>
+<td><code>smarter-link/&lt;site&gt;/#</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="8-custom-payloads">8. Custom Payloads</h2>
+<p>Custom payloads are a deliberate escape hatch for use cases that do not fit the standard typed event model (for example, integrating with a third-party system, sending application-specific configuration, or establishing application-defined side-channels). Publishers should follow standard SmarterLink conventions (topic structure, envelope format) as closely as possible; the flexibility exists for cases where strict conformance is not achievable.</p>
+<h3 id="81-envelope">8.1 Envelope</h3>
+<p>A custom payload message uses the <strong>standard SmarterLink JSON envelope</strong> (§4.1). The header is identical to any other message. The <code>payloadType</code> field carries an application-defined string (e.g. <code>&quot;JobConfig&quot;</code>) rather than a standard event type name.</p>
+<pre><code class="lang-json">{
+  &quot;header&quot;: {
+    &quot;payloadType&quot;: &quot;JobConfig&quot;,
+    &quot;monotonicCounter&quot;: 638765432100000000,
+    &quot;protocolRevision&quot;: 0,
+    &quot;userData&quot;: null
+  },
+  &quot;payload&quot;: { }
+}
+</code></pre>
+<p>The <code>payload</code> value is an arbitrary JSON object. Its schema is entirely application-defined.</p>
+<h3 id="82-topic">8.2 Topic</h3>
+<p>Publishers should use the standard SmarterLink topic hierarchy (§3.2) wherever possible. Deviation is permitted when the standard structure cannot reasonably be applied, for example when the publisher has no meaningful role or participant identity in the SmarterLink sense.</p>
+<h3 id="83-receiver-behaviour">8.3 Receiver Behaviour</h3>
+<p>Receivers identify custom payloads by the <code>payloadType</code> value in the header. If a receiver does not recognize the <code>payloadType</code>, it should ignore the message.</p>
+<hr>
+<h2 id="9-file-transfers">9. File Transfers</h2>
+<h3 id="91-using-data-store-intermediate-preferred-approach">9.1 Using Data Store Intermediate (Preferred Approach)</h3>
+<p>The preferred way to share files between participants is through a <strong>Data Store</strong> participant. A sender uploads the file to the Data Store (via any suitable side-channel, e.g. HTTP) and then publishes a SmarterLink event carrying a <code>Location</code> URI that points to it. Receivers can fetch the file independently, at their own pace, without any coordination with the sender. This promotes decoupled, asynchronous interactions and avoids holding MQTT resources open for the duration of the transfer.</p>
+<p>The MQTT file transfer protocol described in the remainder of this section should only be used when:</p>
+<ul>
+<li>no Data Store participant is available in the deployment, or</li>
+<li>the use case genuinely requires a synchronous, point-to-point transfer over MQTT.</li>
+</ul>
+<h3 id="92-file-transfer-over-mqtt">9.2 File Transfer Over MQTT</h3>
+<p>SmarterLink includes a built-in file transfer mechanism for exchanging binary files (images, reports, recipes, etc.) directly over MQTT. It is loosely adapted from the AWS IoT Core file delivery approach.</p>
+<p>All file transfer negotiation messages use the standard SmarterLink JSON envelope. Raw file chunks are the sole exception: they are published as binary with no envelope.</p>
+<p>The full specification for this protocol is defined in <a href="file-transfer-protocol.html">SmarterLink File Transfer Protocol</a>.</p>
+<hr>
+<h2 id="10-versioning">10. Versioning</h2>
+<h3 id="101-protocol-revision">10.1 Protocol Revision</h3>
+<p>The <code>protocolRevision</code> field in the message header is an integer that identifies the revision of the <strong>entire SmarterLink protocol</strong>, not just the envelope format. Integer revision numbers are used in messages to keep parsing simple and implementation-agnostic.</p>
+<p>Stable protocol releases are identified by a human-readable version number (e.g. <code>1.2</code>). Each stable release formally declares which <code>protocolRevision</code> integer it corresponds to, allowing implementations to map between the two. Pre-release revisions carry no such mapping guarantee.</p>
+<p>The current protocol revision is <strong>0</strong> (pre-release).</p>
+<h3 id="102-payload-schema-versions">10.2 Payload Schema Versions</h3>
+<p>Each payload type carries its own <code>version</code> field for independent schema evolution.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/YvesConanDeliverables/SmarterLink-DotNet/blob/yc-documentation-experiments/docs/static/specs/smarterlink-protocol.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

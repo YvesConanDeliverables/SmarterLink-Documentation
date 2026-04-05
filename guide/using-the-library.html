@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Using the SmarterLink Library | SmarterLink Documentation </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Using the SmarterLink Library | SmarterLink Documentation ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/YvesConanDeliverables/SmarterLink-DotNet/blob/yc-documentation-experiments/docs/static/using-the-library.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="SmarterLink Documentation">
+            SmarterLink Documentation
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="using-the-smarterlink-library">Using the SmarterLink Library</h1>
+
+<p>This document describes how to configure and use the SmarterLink .NET library to build participants that communicate over the SmarterLink protocol.</p>
+<p>The library must be configured and connected to an MQTT broker before use. This is handled by <strong>bootstrapping</strong> either via the <code>SmarterLinkBootstrapper</code> class for standalone apps, or via DI extension methods for Generic Host / ASP.NET Core apps. Once bootstrapped, each participant interacts with the bus through a <strong>role client</strong> that matches its SmarterLink role.</p>
+<table>
+<thead>
+<tr>
+<th>Client</th>
+<th>Role</th>
+<th>Obtain via bootstrapper</th>
+<th>Obtain via DI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HmiClient</code></td>
+<td>Human-Machine Interface</td>
+<td><code>bootstrapper.GetHmiClient()</code></td>
+<td>Inject <code>HmiClient</code></td>
+</tr>
+<tr>
+<td><code>DataProducerClient</code></td>
+<td>Data Producer</td>
+<td><code>bootstrapper.GetDataProducerClient()</code></td>
+<td>Inject <code>DataProducerClient</code></td>
+</tr>
+<tr>
+<td><code>DataProcessorClient</code></td>
+<td>Data Processor</td>
+<td><code>bootstrapper.GetDataProcessorClient()</code></td>
+<td>Inject <code>DataProcessorClient</code></td>
+</tr>
+<tr>
+<td><code>DataStoreClient</code></td>
+<td>Data Store</td>
+<td><code>bootstrapper.GetDataStoreClient()</code></td>
+<td>Inject <code>DataStoreClient</code></td>
+</tr>
+<tr>
+<td><code>FileTransferClient</code></td>
+<td>—</td>
+<td><code>bootstrapper.GetFileTransferClient()</code></td>
+<td>Inject <code>FileTransferClient</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="role-clients">Role Clients</h2>
+<p>All role clients expose a <code>Notifications</code> property (a <code>NotificationClient</code>) for subscribing to incoming events, and a <code>NotifyCustomPayload</code> method for publishing application-defined payloads outside the standard event schema.</p>
+<h3 id="hmiclient">HmiClient</h3>
+<p>Publishes job events on behalf of an HMI participant.</p>
+<pre><code class="lang-csharp">// Signal that the active job has changed
+await hmiClient.NotifyJobEvent(
+    sourceParticipantId: &quot;hmi-01&quot;,
+    payload: new JobEvents.ActiveJobUpdated(jobId: &quot;job-2024-001&quot;));
+
+// Signal that a job file is available
+await hmiClient.NotifyJobEvent(
+    sourceParticipantId: &quot;hmi-01&quot;,
+    payload: new JobEvents.JobFileAvailable(
+        jobId: &quot;job-2024-001&quot;,
+        fileId: &quot;recipe.json&quot;,
+        location: new Location(new Uri(&quot;http://datastore/jobs/job-2024-001/config&quot;))));
+</code></pre>
+<h3 id="dataproducerclient">DataProducerClient</h3>
+<p>Publishes inspection events and job events on behalf of a Data Producer participant.</p>
+<pre><code class="lang-csharp">// Signal that an image has been acquired
+await producerClient.NotifyInspectionEvent(
+    sourceParticipantId: &quot;cam-01&quot;,
+    payload: new InspectionEvents.ComponentImageAcquired(
+        componentId: &quot;Comp-042&quot;,
+        fileId: &quot;Comp-042-01.png&quot;,
+        location: new Location(new Uri(&quot;http://datastore/components/Comp-042/images/Comp-042-01.png&quot;)),
+        jobId: &quot;job-2024-001&quot;));
+
+// Signal system status
+await producerClient.NotifyInspectionEvent(
+    sourceParticipantId: &quot;cam-01&quot;,
+    payload: new InspectionEvents.InspectionSystemStatusAcquired(
+        participantId: &quot;cam-01&quot;,
+        information: new Dictionary&lt;string, string&gt; { [&quot;temperature&quot;] = &quot;42°C&quot; }));
+</code></pre>
+<h3 id="dataprocessorclient">DataProcessorClient</h3>
+<p>Publishes data processor events and job events on behalf of a Data Processor participant.</p>
+<pre><code class="lang-csharp">// Publish an analysis result
+await processorClient.NotifyDataProcessorEvent(
+    sourceParticipantId: &quot;classifier-a&quot;,
+    payload: new DataProcessorEvents.ComponentAnalysisUpdated(
+        componentId: &quot;Comp-042&quot;,
+        fileId: &quot;Comp-042-analysis-a.json&quot;,
+        location: new Location(new Uri(&quot;http://datastore/components/Comp-042/analyses/Comp-042-analysis-a.json&quot;)),
+        jobId: &quot;job-2024-001&quot;));
+
+// Publish a consolidated report
+await processorClient.NotifyDataProcessorEvent(
+    sourceParticipantId: &quot;report-gen&quot;,
+    payload: new DataProcessorEvents.ComponentReportUpdated(
+        componentId: &quot;Comp-042&quot;,
+        fileId: &quot;Comp-042-report.json&quot;,
+        location: new Location(new Uri(&quot;http://datastore/components/Comp-042/reports/Comp-042-report.json&quot;)),
+        jobId: &quot;job-2024-001&quot;));
+</code></pre>
+<h3 id="datastoreclient">DataStoreClient</h3>
+<p>The <code>DataStoreClient</code> has no role-specific publish methods.</p>
+<hr>
+<h2 id="subscribing-to-events">Subscribing to Events</h2>
+<p>Every role client exposes a <code>Notifications</code> property of type <code>NotificationClient</code>. Use it to register handlers for incoming events.</p>
+<p>Standard event types are defined in <code>SmarterLink.Core</code> under the <code>SmarterLink.Core.Protocol.Events</code> namespace:</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Events</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>JobEvents</code></td>
+<td><code>ActiveJobUpdated</code>, <code>JobFileAvailable</code></td>
+</tr>
+<tr>
+<td><code>InspectionEvents</code></td>
+<td><code>ComponentImageAcquired</code>, <code>UserInformationAcquired</code>, <code>InspectionSystemStatusAcquired</code></td>
+</tr>
+<tr>
+<td><code>DataProcessorEvents</code></td>
+<td><code>ComponentAnalysisUpdated</code>, <code>ComponentReportUpdated</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each handler method is constrained to the appropriate base class (e.g. <code>RegisterInspectionEventHandler&lt;TEvent&gt;</code> requires <code>TEvent : InspectionEvents</code>), so the compiler will catch mismatches at build time.</p>
+<h3 id="subscribing-to-job-events">Subscribing to job events</h3>
+<pre><code class="lang-csharp">client.Notifications.RegisterJobEventHandler&lt;JobEvents.ActiveJobUpdated&gt;(
+    async (payload, userData) =&gt;
+    {
+        Console.WriteLine($&quot;Active job changed to: {payload.JobId}&quot;);
+    });
+</code></pre>
+<h3 id="subscribing-to-data-producer-events">Subscribing to Data Producer events</h3>
+<pre><code class="lang-csharp">// From any producer
+client.Notifications.RegisterInspectionEventHandler&lt;InspectionEvents.ComponentImageAcquired&gt;(
+    async (payload, userData) =&gt;
+    {
+        Console.WriteLine($&quot;Image acquired for {payload.ComponentId}: {payload.Location}&quot;);
+    });
+
+// From a specific producer only
+client.Notifications.RegisterInspectionEventHandler&lt;InspectionEvents.ComponentImageAcquired&gt;(
+    handler: async (payload, userData) =&gt; { /* ... */ },
+    participantId: &quot;cam-01&quot;);
+</code></pre>
+<h3 id="subscribing-to-data-processor-events">Subscribing to Data Processor events</h3>
+<pre><code class="lang-csharp">client.Notifications.RegisterDataProcessorEventHandler&lt;DataProcessorEvents.ComponentReportUpdated&gt;(
+    async (payload, userData) =&gt;
+    {
+        Console.WriteLine($&quot;Report available for {payload.ComponentId} at {payload.Location}&quot;);
+    });
+</code></pre>
+<h3 id="catch-all-handler">Catch-all handler</h3>
+<p>To receive every standard event on the bus (useful for audit logging or diagnostics):</p>
+<pre><code class="lang-csharp">client.Notifications.RegisterCatchAllStandardEventHandler(
+    async (payload, userData) =&gt;
+    {
+        Console.WriteLine($&quot;Event received: {payload.GetType().Name}&quot;);
+    });
+</code></pre>
+<h3 id="custom-payload-handler">Custom payload handler</h3>
+<p>To receive application-defined payloads that fall outside the standard event schema:</p>
+<pre><code class="lang-csharp">client.Notifications.RegisterCustomPayloadHandler(
+    topicFilter: &quot;smarter-link/site-x/area-1/sub-1/station-a/#&quot;,
+    handler: async (topic, header, customPayload) =&gt;
+    {
+        Console.WriteLine($&quot;Custom payload on {topic}: {customPayload}&quot;);
+    });
+</code></pre>
+<hr>
+<h2 id="bootstrapping">Bootstrapping</h2>
+<h3 id="option-a-generic-host--aspnet-core-di">Option A: Generic Host / ASP.NET Core (DI)</h3>
+<p>Use the DI extension methods when using <code>Microsoft.Extensions.Hosting</code> or ASP.NET Core.</p>
+<p><strong>1. Register services:</strong></p>
+<pre><code class="lang-csharp">builder.Services.AddMessagingServices();   // registers IMessageBus and MQTT transport
+builder.Services.AddSmarterLinkClients();  // registers all role clients and NotificationClient
+</code></pre>
+<p><strong>2. Configure MQTT via <code>appsettings.json</code>:</strong></p>
+<pre><code class="lang-json">{
+  &quot;SmarterLink&quot;: {
+    &quot;Mqtt&quot;: {
+      &quot;ClientId&quot;: &quot;my-participant&quot;,
+      &quot;Host&quot;: &quot;localhost&quot;,
+      &quot;Port&quot;: 1883
+    },
+    &quot;Topic&quot;: {
+      &quot;Site&quot;: &quot;site-x&quot;,
+      &quot;Area&quot;: &quot;area-1&quot;,
+      &quot;SubArea&quot;: &quot;sub-1&quot;,
+      &quot;Station&quot;: &quot;station-a&quot;
+    }
+  }
+}
+</code></pre>
+<p>Alternatively, pass the MQTT client ID directly to <code>AddMessagingServices</code>:</p>
+<pre><code class="lang-csharp">builder.Services.AddMessagingServices(mqttClientId: &quot;my-participant&quot;);
+</code></pre>
+<p><strong>3. Start the host:</strong></p>
+<pre><code class="lang-csharp">await host.RunWithMessagingServices();
+</code></pre>
+<p><code>RunWithMessagingServices()</code> connects the message bus to the broker before starting the host. The equivalent of calling <code>ConnectAsync()</code> on <code>IMessageBus</code> manually.</p>
+<p><strong>4. Inject clients:</strong></p>
+<pre><code class="lang-csharp">public class MyService(DataProducerClient producer)
+{
+    // ...
+}
+</code></pre>
+<p>All clients are registered as transient. <code>NotificationClient</code> is also transient and is injected into each client automatically.</p>
+<hr>
+<h3 id="option-b-standalone-bootstrapper">Option B: Standalone Bootstrapper</h3>
+<p>Use <code>SmarterLinkBootstrapper</code> when not using a Generic Host (e.g. console apps or embedded scenarios).</p>
+<pre><code class="lang-csharp">var config = new SmarterLinkConfig(
+    TopicConfig: new TopicConfig(
+        Site: &quot;site-x&quot;,
+        Area: &quot;area-1&quot;,
+        SubArea: &quot;sub-1&quot;,
+        Station: &quot;station-a&quot;),
+    MqttConfig: new MqttConfig(
+        ClientId: &quot;my-participant&quot;,
+        Host: &quot;localhost&quot;));
+
+var bootstrapper = new SmarterLinkBootstrapper(config);
+bootstrapper.AddConsoleLogging(); // optional
+
+await bootstrapper.StartAsync();
+
+// Obtain clients after starting
+var producerClient = bootstrapper.GetDataProducerClient();
+var processorClient = bootstrapper.GetDataProcessorClient();
+var hmiClient = bootstrapper.GetHmiClient();
+var storeClient = bootstrapper.GetDataStoreClient();
+</code></pre>
+<p><code>StartAsync()</code> must be called before any client is obtained. Calling a <code>Get*Client()</code> method before <code>StartAsync()</code> throws an <code>InvalidOperationException</code>.</p>
+<hr>
+<h2 id="configuration">Configuration</h2>
+<p>Regardless of which bootstrapping approach you use, SmarterLink requires two pieces of configuration:</p>
+<p><strong><code>TopicConfig</code></strong> -- describes the location of the station in the topic hierarchy:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Site</code></td>
+<td>Site or facility identifier</td>
+</tr>
+<tr>
+<td><code>Area</code></td>
+<td>Area within the site</td>
+</tr>
+<tr>
+<td><code>SubArea</code></td>
+<td>Sub-area within the area</td>
+</tr>
+<tr>
+<td><code>Station</code></td>
+<td>Station or work cell</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>MqttConfig</code></strong> -- MQTT broker connection settings:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ClientId</code></td>
+<td>yes</td>
+<td>-</td>
+<td>Unique MQTT client ID for this process</td>
+</tr>
+<tr>
+<td><code>Host</code></td>
+<td>no</td>
+<td><code>localhost</code></td>
+<td>Broker hostname</td>
+</tr>
+<tr>
+<td><code>Port</code></td>
+<td>no</td>
+<td><code>1883</code></td>
+<td>Broker port</td>
+</tr>
+<tr>
+<td><code>Username</code></td>
+<td>no</td>
+<td>-</td>
+<td>Broker username</td>
+</tr>
+<tr>
+<td><code>Password</code></td>
+<td>no</td>
+<td>-</td>
+<td>Broker password</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="packages">Packages</h2>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SmarterLink.Bootstrapping</code></td>
+<td>Standalone bootstrapper for console/simple apps</td>
+</tr>
+<tr>
+<td><code>SmarterLink.Clients</code></td>
+<td>Role clients and notification client</td>
+</tr>
+<tr>
+<td><code>SmarterLink.Messaging</code></td>
+<td>DI extensions for Generic Host / ASP.NET Core apps</td>
+</tr>
+<tr>
+<td><code>SmarterLink.Core</code></td>
+<td>Domain models and protocol types (transitive dependency)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="file-transfers">File Transfers</h2>
+<p><code>FileTransferClient</code> is available via DI (<code>Inject FileTransferClient</code>) or via the bootstrapper pattern alongside the role clients. It implements the <a href="../spec/file-transfer-protocol.html">SmarterLink File Transfer Protocol</a> directly over MQTT.</p>
+<h3 id="sending-a-file">Sending a file</h3>
+<p>Create a <strong>File Send Descriptor (FSD)</strong> to make a file available for download. The descriptor subscribes to the appropriate MQTT topics and handles incoming metadata and transfer requests automatically. Embed the descriptor's <code>Location</code> in a SmarterLink event payload so receivers know where to find the file.</p>
+<pre><code class="lang-csharp">await using var stream = File.OpenRead(&quot;image.png&quot;);
+
+await using var fsd = await fileTransferClient.CreateFileSendDescriptorAsync(
+    senderId: &quot;cam-01&quot;,
+    descriptorId: &quot;fs:00&quot;,
+    stream: stream,
+    filename: &quot;image.png&quot;,
+    expiry: DateTimeOffset.UtcNow.AddMinutes(5),
+    supportedHashingFunctions: HashingFunction.Sha256);
+
+// Embed fsd.Location in a SmarterLink event
+await producerClient.NotifyInspectionEvent(
+    sourceParticipantId: &quot;cam-01&quot;,
+    payload: new InspectionEvents.ComponentImageAcquired(
+        componentId: &quot;Comp-042&quot;,
+        fileId: &quot;image.png&quot;,
+        location: fsd.Location,
+        jobId: &quot;job-2024-001&quot;));
+
+// Keep the descriptor alive until the TTL expires
+await fsd.ExpiryCompletion;
+</code></pre>
+<h3 id="receiving-a-file">Receiving a file</h3>
+<p>When a <code>Location</code> is received in an event payload, use <code>FileTransferClient</code> to fetch metadata, create a <strong>File Receive Descriptor (FRD)</strong>, and request the transfer.</p>
+<pre><code class="lang-csharp">// 1. Fetch metadata from the sender
+var metadata = await fileTransferClient.GetMetadataAsync(location);
+if (metadata is null) return; // sender not available
+
+// 2. Create a receive descriptor
+await using var frd = await fileTransferClient.CreateFileReceiveDescriptorAsync(
+    senderId: &quot;cam-01&quot;,
+    descriptorId: &quot;fr:00&quot;,
+    metadata: metadata);
+
+// 3. Request the transfer
+var accepted = await fileTransferClient.RequestTransferAsync(
+    fileLocation: location,
+    chunkSize: 64 * 1024,
+    receiveDescriptor: frd);
+
+if (!accepted) return; // sender rejected the request
+
+// 4. Read chunks as they arrive
+await using var output = File.Create(&quot;received-image.png&quot;);
+await foreach (var chunk in frd.GetChunksAsync())
+{
+    await output.WriteAsync(chunk);
+}
+</code></pre>
+<p>Progress can be tracked via <code>frd.ReceivedSize</code> and <code>frd.TotalSize</code> during the transfer.</p>
+<hr>
+<h2 id="testing">Testing</h2>
+<p>For unit and integration tests, register <code>InMemoryTransport</code> instead of the real MQTT transport. This runs the entire message bus in-process with no broker required.</p>
+<pre><code class="lang-csharp">services.AddMessagingServicesForTesting();
+services.AddSmarterLinkClients();
+</code></pre>
+<p>Everything else (clients, handlers, topic routing) works identically to the production setup.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/YvesConanDeliverables/SmarterLink-DotNet/blob/yc-documentation-experiments/docs/static/using-the-library.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
