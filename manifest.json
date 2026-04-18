@@ -1,0 +1,951 @@
+{
+  "source_base_path": "/home/runner/work/SmarterLink-DotNet/SmarterLink-DotNet/docfx",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../docs/static/mqtt-topic-format.md",
+      "output": {
+        ".html": {
+          "relative_path": "guide/mqtt-topic-format.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../docs/static/protocol-envelope.md",
+      "output": {
+        ".html": {
+          "relative_path": "guide/protocol-envelope.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "../docs/static/specs/file-transfer-protocol-transfer-flow-example.png",
+      "output": {
+        "resource": {
+          "relative_path": "spec/file-transfer-protocol-transfer-flow-example.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../docs/static/specs/file-transfer-protocol.md",
+      "output": {
+        ".html": {
+          "relative_path": "spec/file-transfer-protocol.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../docs/static/specs/smarterlink-protocol.md",
+      "output": {
+        ".html": {
+          "relative_path": "spec/smarterlink-protocol.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../docs/static/subscription-topic-filters.md",
+      "output": {
+        ".html": {
+          "relative_path": "guide/subscription-topic-filters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "../docs/static/using-the-library.md",
+      "output": {
+        ".html": {
+          "relative_path": "guide/using-the-library.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Microsoft.Extensions.Hosting.StartupExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Microsoft.Extensions.Hosting.StartupExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Microsoft.Extensions.Hosting.StartupExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Microsoft.Extensions.Hosting.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Microsoft.Extensions.Hosting.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Microsoft.Extensions.Hosting",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Bootstrapping.MqttConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Bootstrapping.MqttConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Bootstrapping.MqttConfig",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Bootstrapping.MqttConfig.yml\" sourcestartlinenumber=\"1\">MQTT broker connection settings.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Bootstrapping.SmarterLinkBootstrapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Bootstrapping.SmarterLinkBootstrapper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Bootstrapping.SmarterLinkBootstrapper",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Bootstrapping.SmarterLinkBootstrapper.yml\" sourcestartlinenumber=\"1\">Entry point for configuring and starting SmarterLink without a DI container.\nConfigure the bootstrapper, call <xref href=\"SmarterLink.Bootstrapping.SmarterLinkBootstrapper.StartAsync\" data-throw-if-not-resolved=\"false\"></xref> to connect, then obtain\nrole clients via the <code>Get*Client()</code> methods.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Bootstrapping.SmarterLinkConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Bootstrapping.SmarterLinkConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Bootstrapping.SmarterLinkConfig",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Bootstrapping.SmarterLinkConfig.yml\" sourcestartlinenumber=\"1\">Top-level configuration for the SmarterLink bootstrapper.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Bootstrapping.TopicConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Bootstrapping.TopicConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Bootstrapping.TopicConfig",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Bootstrapping.TopicConfig.yml\" sourcestartlinenumber=\"1\">Defines the MQTT topic hierarchy segments for this participant's location.\nThese values populate the <code>site</code>, <code>area</code>, <code>sub-area</code>, and <code>station</code>\nlevels of all published topics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Bootstrapping.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Bootstrapping.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Bootstrapping",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.DataProcessorClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.DataProcessorClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients.DataProcessorClient",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Clients.DataProcessorClient.yml\" sourcestartlinenumber=\"1\">Client for Data Processor participants. Data Processors consume data from producers,\nperform analysis, and publish results.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.DataProducerClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.DataProducerClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients.DataProducerClient",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Clients.DataProducerClient.yml\" sourcestartlinenumber=\"1\">Client for Data Producer participants. Data Producers acquire and publish production data\nsuch as component images and measurements.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.DataStoreClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.DataStoreClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients.DataStoreClient",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Clients.DataStoreClient.yml\" sourcestartlinenumber=\"1\">Client for Data Store participants. Data Stores persist data and serve files to other participants.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.Files.FileTransferClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.Files.FileTransferClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients.Files.FileTransferClient",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Clients.Files.FileTransferClient.yml\" sourcestartlinenumber=\"1\">Provides file transfer operations over MQTT using the SmarterLink file transfer protocol.\nObtain an instance via SmarterLink.Bootstrapping.SmarterLinkBootstrapper.GetFileTransferClient\nor by injecting it through DI after calling <code>AddSmarterLinkClients</code>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.Files.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.Files.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients.Files",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.HmiClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.HmiClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients.HmiClient",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Clients.HmiClient.yml\" sourcestartlinenumber=\"1\">Client for Human-Machine Interface participants. HMI participants display information\nand interact with operators on the shop floor.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.NotificationClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.NotificationClient.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients.NotificationClient",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Clients.NotificationClient.yml\" sourcestartlinenumber=\"1\">Provides event subscription for a SmarterLink participant. Obtain an instance via\n<xref href=\"SmarterLink.Clients.RoleClientBase.Notifications\" data-throw-if-not-resolved=\"false\"></xref> on any role client.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.RoleClientBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.RoleClientBase.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients.RoleClientBase",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Clients.RoleClientBase.yml\" sourcestartlinenumber=\"1\">Base class for all role-specific SmarterLink clients. Provides access to event subscriptions\nand the ability to publish custom payloads.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Clients.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Clients.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Clients",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Attributes.PayloadTypeNameAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Attributes.PayloadTypeNameAttribute.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Attributes.PayloadTypeNameAttribute",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Attributes.PayloadTypeNameAttribute.yml\" sourcestartlinenumber=\"1\">Specifies the stable wire name for a SmarterLink protocol payload type.\nWhen present, this name is used in the protocol header's <code>payloadType</code> field,\nthe MQTT topic event segment, and documentation schema exports — in place of the\nC# type name. This decouples the wire protocol name from the C# identifier, so\ntypes can be renamed without breaking protocol compatibility.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Attributes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Attributes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Attributes",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.FileTransfer.HashingFunction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.FileTransfer.HashingFunction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.FileTransfer.HashingFunction",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.FileTransfer.HashingFunction.yml\" sourcestartlinenumber=\"1\">Identifies a hashing algorithm used for file transfer integrity verification.\nTwo canonical values are defined; custom algorithm names are permitted.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.FileTransfer.IFileReceiverDescriptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.FileTransfer.IFileReceiverDescriptor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.FileTransfer.IFileReceiverDescriptor",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.FileTransfer.IFileReceiverDescriptor.yml\" sourcestartlinenumber=\"1\">Represents the receiver side of an active MQTT file transfer. Use <xref href=\"SmarterLink.Core.FileTransfer.IFileReceiverDescriptor.GetChunksAsync(System.Threading.CancellationToken)\" data-throw-if-not-resolved=\"false\"></xref>\nto stream the incoming file chunks. Dispose when the transfer is complete or aborted.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.FileTransfer.IFileTransferDescriptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.FileTransfer.IFileTransferDescriptor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.FileTransfer.IFileTransferDescriptor",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.FileTransfer.IFileTransferDescriptor.yml\" sourcestartlinenumber=\"1\">Represents an active file transfer operation (send or receive). Disposing the descriptor\nreleases associated resources and deactivates the transfer.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.FileTransfer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.FileTransfer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.FileTransfer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Formatting.ProtocolPayloadNameFormatter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Formatting.ProtocolPayloadNameFormatter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Formatting.ProtocolPayloadNameFormatter",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Formatting.ProtocolPayloadNameFormatter.yml\" sourcestartlinenumber=\"1\">Provides stable wire name and documentation name resolution for SmarterLink protocol payload types.\nAll name forms are derived from <xref href=\"SmarterLink.Core.Attributes.PayloadTypeNameAttribute\" data-throw-if-not-resolved=\"false\"></xref> when present on the type,\nfalling back to the C# type name when the attribute is absent.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Formatting.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Formatting.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Formatting",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Messaging.Delegates.CustomProtocolDataPayloadHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Messaging.Delegates.CustomProtocolDataPayloadHandler.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Messaging.Delegates.CustomProtocolDataPayloadHandler",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Messaging.Delegates.CustomProtocolDataPayloadHandler.yml\" sourcestartlinenumber=\"1\">Handler for a custom (application-defined) SmarterLink payload.\nCustom payloads use the standard protocol envelope but carry an arbitrary JSON payload\nand a caller-defined <code>payloadType</code> name, for use cases that do not fit the standard\ntyped event model. Publishers should follow standard SmarterLink topic conventions where possible.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Messaging.Delegates.ProtocolDataPayloadHandler-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Messaging.Delegates.ProtocolDataPayloadHandler-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Messaging.Delegates.ProtocolDataPayloadHandler<TPayload>",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Messaging.Delegates.ProtocolDataPayloadHandler-1.yml\" sourcestartlinenumber=\"1\">Handler for a typed SmarterLink protocol payload.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Messaging.Delegates.RawDataPayloadHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Messaging.Delegates.RawDataPayloadHandler.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Messaging.Delegates.RawDataPayloadHandler",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Messaging.Delegates.RawDataPayloadHandler.yml\" sourcestartlinenumber=\"1\">Handler for a raw (un-enveloped) MQTT message.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Messaging.Delegates.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Messaging.Delegates.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Messaging.Delegates",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Messaging.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Messaging.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Messaging",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Models.ComponentId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Models.ComponentId.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Models.ComponentId",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Models.ComponentId.yml\" sourcestartlinenumber=\"1\">Identifies a component (part or workpiece). Can be used to correlate SmarterLink payloads\nwith external component, part, or CAD management systems. Serializes as a plain string.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Models.JobConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Models.JobConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Models.JobConfig",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Models.JobConfig.yml\" sourcestartlinenumber=\"1\">Free-form key-value configuration dictionary for a job. The schema is entirely application-defined\nand is typically distributed out-of-band (for example, via a custom payload or a side-channel)\nrather than as a standard SmarterLink event.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Models.JobId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Models.JobId.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Models.JobId",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Models.JobId.yml\" sourcestartlinenumber=\"1\">Identifies a job. Can be used to correlate SmarterLink payloads with external job management systems.\nSerializes as a plain string.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Models.Location.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Models.Location.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Models.Location",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Models.Location.yml\" sourcestartlinenumber=\"1\">A URI reference to a resource accessible by SmarterLink participants. All URI schemes are permitted.\nFiles served via the built-in file transfer protocol use the <code>smarterlink://</code> scheme.\nSerializes as a URI string.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Models.ParticipantId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Models.ParticipantId.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Models.ParticipantId",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Models.ParticipantId.yml\" sourcestartlinenumber=\"1\">Identifies a SmarterLink participant. Must be unique across the entire SmarterLink network\nand must not contain MQTT reserved characters (<code>/</code>, <code>+</code>, <code>#</code>, <code>$</code>).\nSerializes as a plain string.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Models.Role.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Models.Role.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Models.Role",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Models.Role.yml\" sourcestartlinenumber=\"1\">Describes a participant's function in the SmarterLink system. Four canonical roles are defined;\ncustom roles are permitted but carry no standard event definitions.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Models.ValueOf-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Models.ValueOf-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Models.ValueOf<T>",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Models.ValueOf-1.yml\" sourcestartlinenumber=\"1\">Abstract base for strongly-typed value wrappers. Derived types wrap a primitive or value-type\nto prevent accidental interchangeability between distinct concepts (e.g. <xref href=\"SmarterLink.Core.Models.JobId\" data-throw-if-not-resolved=\"false\"></xref> vs <xref href=\"SmarterLink.Core.Models.ComponentId\" data-throw-if-not-resolved=\"false\"></xref>).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Models.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Models.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Models",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.ComponentAnalysisUpdated.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.ComponentAnalysisUpdated.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.DataProcessorEvents.ComponentAnalysisUpdated",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.ComponentAnalysisUpdated.yml\" sourcestartlinenumber=\"1\">Signals that analysis results for a component are available for download.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.ComponentReportUpdated.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.ComponentReportUpdated.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.DataProcessorEvents.ComponentReportUpdated",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.ComponentReportUpdated.yml\" sourcestartlinenumber=\"1\">Signals that a report for a component has been updated and is available for download.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.DataProcessorEvents",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.DataProcessorEvents.yml\" sourcestartlinenumber=\"1\">Base type for events published by Data Processor participants.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.InspectionEvents.ComponentImageAcquired.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.InspectionEvents.ComponentImageAcquired.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.InspectionEvents.ComponentImageAcquired",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.InspectionEvents.ComponentImageAcquired.yml\" sourcestartlinenumber=\"1\">Signals that an image of a component has been acquired and is available for download.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.InspectionEvents.InspectionSystemStatusAcquired.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.InspectionEvents.InspectionSystemStatusAcquired.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.InspectionEvents.InspectionSystemStatusAcquired",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.InspectionEvents.InspectionSystemStatusAcquired.yml\" sourcestartlinenumber=\"1\">Reports status information from a Data Producer participant.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.InspectionEvents.UserInformationAcquired.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.InspectionEvents.UserInformationAcquired.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.InspectionEvents.UserInformationAcquired",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.InspectionEvents.UserInformationAcquired.yml\" sourcestartlinenumber=\"1\">Carries operator-entered or operator-associated information for a component.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.InspectionEvents.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.InspectionEvents.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.InspectionEvents",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.InspectionEvents.yml\" sourcestartlinenumber=\"1\">Base type for events published by Data Producer (inspection) participants.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.JobEvents.ActiveJobUpdated.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.JobEvents.ActiveJobUpdated.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.JobEvents.ActiveJobUpdated",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.JobEvents.ActiveJobUpdated.yml\" sourcestartlinenumber=\"1\">Signals that the active job at a station has changed.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.JobEvents.JobFileAvailable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.JobEvents.JobFileAvailable.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.JobEvents.JobFileAvailable",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.JobEvents.JobFileAvailable.yml\" sourcestartlinenumber=\"1\">Signals that a file associated with a job (for example, a recipe or configuration) is available for download.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.JobEvents.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.JobEvents.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events.JobEvents",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Events.JobEvents.yml\" sourcestartlinenumber=\"1\">Base type for job-scoped events. Job events are published at the station level\nand are not tied to a specific participant.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Events.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Events.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Events",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataRequest.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataRequest",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataRequest.yml\" sourcestartlinenumber=\"1\">Sent by a receiver to request metadata about a file before initiating a transfer.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataResponse.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataResponse.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataResponse",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataResponse.yml\" sourcestartlinenumber=\"1\">Sent by a sender in response to a <xref href=\"SmarterLink.Core.Protocol.Models.FileTransferModels.MetadataRequest\" data-throw-if-not-resolved=\"false\"></xref>. Describes the file\nand the sender's capabilities.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferAccepted.Hash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferAccepted.Hash.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Models.FileTransferModels.TransferAccepted.Hash",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferAccepted.Hash.yml\" sourcestartlinenumber=\"1\">A hash value computed over the transferred file using a specific algorithm.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferAccepted.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferAccepted.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Models.FileTransferModels.TransferAccepted",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferAccepted.yml\" sourcestartlinenumber=\"1\">Sent by a sender to indicate that a transfer request was accepted. Includes\nintegrity hashes for the transferred data.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferRejected.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferRejected.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Models.FileTransferModels.TransferRejected",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferRejected.yml\" sourcestartlinenumber=\"1\">Sent by a sender to indicate that a transfer request was rejected.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferRequest.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Models.FileTransferModels.TransferRequest",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Models.FileTransferModels.TransferRequest.yml\" sourcestartlinenumber=\"1\">Sent by a receiver to request that the sender begin transferring file chunks.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Models.FileTransferModels.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Models.FileTransferModels",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.Models.FileTransferModels.yml\" sourcestartlinenumber=\"1\">Base type for MQTT file transfer protocol messages.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.Models.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.Models.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.Models",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.ProtocolDataHeader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.ProtocolDataHeader.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.ProtocolDataHeader",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.ProtocolDataHeader.yml\" sourcestartlinenumber=\"1\">The envelope header present on every SmarterLink message. Contains routing metadata,\nordering information, and an optional application-defined UserData string.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.ProtocolDataPayloadBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.ProtocolDataPayloadBase.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol.ProtocolDataPayloadBase",
+      "Summary": "<p sourcefile=\"api/SmarterLink.Core.Protocol.ProtocolDataPayloadBase.yml\" sourcestartlinenumber=\"1\">Base type for all strongly-typed SmarterLink payload types. Every payload carries a\n<code>version</code> field for independent schema evolution.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SmarterLink.Core.Protocol.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SmarterLink.Core.Protocol.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SmarterLink.Core.Protocol",
+      "Summary": null
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

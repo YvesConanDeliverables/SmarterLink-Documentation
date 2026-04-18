@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title> | SmarterLink Documentation </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content=" | SmarterLink Documentation ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/YvesConanDeliverables/SmarterLink-DotNet/blob/yc-documentation-experiments/docs/static/protocol-envelope.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="SmarterLink Documentation">
+            SmarterLink Documentation
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<h2 id="protocol-envelope">Protocol Envelope</h2>
+<p>Every SmarterLink message is a JSON object with two required top-level fields: a <code>header</code> and a <code>payload</code>.<sup>1</sup></p>
+<pre><code class="lang-json">{
+  &quot;header&quot;: { ... },
+  &quot;payload&quot;: { ... }
+}
+</code></pre>
+<h3 id="header">Header</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>payloadType</code></td>
+<td>string</td>
+<td>yes</td>
+<td>The simple type name of the payload (e.g. <code>&quot;ActiveJobUpdated&quot;</code>). Used by receivers to deserialize the payload into the correct type.</td>
+</tr>
+<tr>
+<td><code>monotonicCounter</code></td>
+<td>integer (int64)</td>
+<td>no</td>
+<td>A value that increases with each successive message. Can be a timestamp (e.g. .NET ticks since the Unix epoch) or a simple counter. Used to determine relative message order.</td>
+</tr>
+<tr>
+<td><code>protocolRevision</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>The revision number of the SmarterLink protocol used by this message. Current value: <code>0</code>.</td>
+</tr>
+<tr>
+<td><code>userData</code></td>
+<td>string</td>
+<td>no</td>
+<td>Optional free-form string. Passed through transparently by the protocol; interpretation is left to the application.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="payload">Payload</h3>
+<p>The payload object is specific to each event type. All payloads share one common field:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>The version of this specific payload type's schema. Receivers can use this to handle multiple schema revisions of the same event.</td>
+</tr>
+</tbody>
+</table>
+<p>Remaining fields are defined per payload type. See the generated JSON schemas for the full structure of each type.</p>
+<h3 id="example">Example</h3>
+<pre><code class="lang-json">{
+  &quot;header&quot;: {
+    &quot;payloadType&quot;: &quot;ActiveJobUpdated&quot;,
+    &quot;monotonicCounter&quot;: 638765432100000000,
+    &quot;protocolRevision&quot;: 0,
+    &quot;userData&quot;: null
+  },
+  &quot;payload&quot;: {
+    &quot;version&quot;: 1,
+    &quot;jobId&quot;: &quot;job-2024-001&quot;
+  }
+}
+</code></pre>
+<hr>
+<p><sup>1</sup> File transfer chunk messages are an exception: raw binary chunk data is transmitted without a JSON envelope. Only the negotiation messages that initiate and acknowledge a transfer use the standard envelope format.</p>
+<hr>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/YvesConanDeliverables/SmarterLink-DotNet/blob/yc-documentation-experiments/docs/static/protocol-envelope.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

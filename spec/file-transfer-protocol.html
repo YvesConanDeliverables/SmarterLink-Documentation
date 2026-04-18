@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>SmarterLink File Transfer Protocol | SmarterLink Documentation </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="SmarterLink File Transfer Protocol | SmarterLink Documentation ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/YvesConanDeliverables/SmarterLink-DotNet/blob/yc-documentation-experiments/docs/static/specs/file-transfer-protocol.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="SmarterLink Documentation">
+            SmarterLink Documentation
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="smarterlink-file-transfer-protocol">SmarterLink File Transfer Protocol</h1>
+
+<p>Files that need to be shared between participants are best served through a <strong>Data Store</strong> participant: the sender uploads the file to the Data Store, then publishes a SmarterLink event carrying a <code>Location</code> URI pointing to it. Receivers fetch the file independently and at their own pace, keeping interactions decoupled and asynchronous.</p>
+<p>This document describes an alternative protocol for transferring files <strong>directly over MQTT</strong>. It should only be used when no Data Store is available in the deployment, or when the use case genuinely requires a synchronous point-to-point transfer.</p>
+<hr>
+<h2 id="design-principles">Design Principles</h2>
+<ul>
+<li>Files may exceed the broker's maximum message size, so they are split into chunks and reassembled by the receiver.</li>
+<li>Chunk size is negotiated per transfer so that participants with limited buffer capacity are accommodated.</li>
+<li>Senders may serve multiple files concurrently using locally unique <strong>File Send Descriptors</strong>.</li>
+<li>Receivers may receive multiple files concurrently using locally unique <strong>File Receive Descriptors</strong>.</li>
+<li>No MQTT 5 features are used, ensuring compatibility with a wide range of brokers.</li>
+<li>Integrity verification via hashing is optional, to accommodate low-resource devices that cannot perform hashing. SHA-256 is preferred when hashing is used.</li>
+</ul>
+<hr>
+<h2 id="hashing">Hashing</h2>
+<p>Hashing is optional. Some participants (particularly low-resource embedded devices) may not have the processing capacity to compute hashes, and the protocol accommodates this.</p>
+<p>Two hashing functions are officially supported:</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Identifier</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SHA-256</td>
+<td><code>SHA-256</code></td>
+<td>Preferred</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td><code>MD5</code></td>
+<td>Supported</td>
+</tr>
+</tbody>
+</table>
+<p>Other hashing functions may be used if both the sender and receiver support them. Senders advertise their supported functions in <code>MetadataResponse</code>. Receivers select from that list when constructing a <code>TransferRequest</code>. A sender MUST reject a <code>TransferRequest</code> that specifies an algorithm it does not support.</p>
+<hr>
+<h2 id="descriptors">Descriptors</h2>
+<p><strong>File Send Descriptor (FSD):</strong> A named handle assigned by the sender to a file it is serving. Takes the form <code>fs:&lt;id&gt;</code>, where <code>&lt;id&gt;</code> is locally unique to the sender participant. Multiple FSDs may be active concurrently.</p>
+<p><strong>File Receive Descriptor (FRD):</strong> A named handle assigned by the receiver to manage an incoming transfer. Takes the form <code>fr:&lt;id&gt;</code>, where <code>&lt;id&gt;</code> is locally unique to the receiver participant. Multiple FRDs may be active concurrently.</p>
+<hr>
+<h2 id="file-location-uri">File Location URI</h2>
+<p>When a sender produces a file it advertises it by embedding a <strong>File Location</strong> URI in a SmarterLink event payload (e.g. <code>componentImageAcquired</code>). The URI encodes the full MQTT topic of the FSD using the <code>smarterlink://</code> scheme:</p>
+<pre><code>smarterlink://&lt;full-mqtt-topic-of-the-fsd&gt;
+</code></pre>
+<p><strong>Example:</strong> A Data Producer with participant ID <code>cam-01</code> at station <code>station-a</code> in <code>area-1 / sub-1 / site-x</code>, serving FSD <code>fs:00</code>:</p>
+<pre><code>smarterlink://smarter-link/site-x/area-1/sub-1/station-a/producers/~cam-01/fs:00
+</code></pre>
+<p>Receivers strip the <code>smarterlink://</code> prefix and use the remainder as the MQTT topic root when constructing all FSD request and response topics.</p>
+<hr>
+<h2 id="transfer-flow">Transfer Flow</h2>
+<h3 id="example">Example</h3>
+<p><img src="file-transfer-protocol-transfer-flow-example.png" alt="Alt text"></p>
+<!-- 
+```mermaid
+sequenceDiagram
+  participant c as Receiver 📥
+  participant b as Broker
+  participant s as 📄 Sender
+
+
+  rect rgba(64,48,48,0.5)
+    note right of s: 1️⃣ Sender produces a file
+    note right of s: 2️⃣ Sender assigns an FSD (00) to this file
+    s ->> b: SUB ./~sender/fs:00/.get-metadata
+    s ->> b: SUB ./~sender/fs:00/.transfer
+    activate s
+      note right of s: (Now serving fs:00)
+      note right of s: 3️⃣ Sender publishes a message containing FSD
+      s ->> b: PUB
+      note right of b: ✉️ ComponentImageAcquired <br/> Location: ./~sender/fs:00
+  end
+
+
+  rect rgba(48,64,48,0.5)
+      b --) c:
+      activate c
+        note left of c: 4️⃣ Receiver learns about file
+      note left of c: 5️⃣ Receiver uses File Location to query metadata
+        c ->> b: SUB ./~sender/fs:00/metadata
+        c ->> b: PUB ./~sender/fs:00/.get-metadata
+
+          note left of b: FileMetadataRequest ✉️
+        b --) s:
+        activate s
+          s ->> b: PUB: ./~sender/fs:00/metadata
+        deactivate s
+        note right of b: ✉️ FileMetadataResponse
+        b --) c:
+        c ->> b: UNSUB ./~sender/fs:00/metadata
+      deactivate c
+
+      note left of c: 6️⃣ Receiver prepares a File Receive Descriptor (99)
+      c ->> b: SUB ./~recver/fr:99/chunks/+
+      activate c
+      note left of c: (Now ready to receive fr:99)
+  end
+
+
+  rect rgba(48,48,64,0.5)
+  note left of c: 7️⃣ Receiver sends a transfer request to Sender
+    alt ❌ Can't fulfill request ❌
+      c ->> b: PUB ./~sender/fs:00/.transfer
+      activate c
+        note left of b: FileTransferRequest ✉️
+        b --) s:
+        activate s
+          s ->> b: PUB ./~recver/fr:99/rejected
+        deactivate s
+        note right of b: ✉️ FileTransferRejected
+        b --) c:
+      deactivate c
+    else ✅ Can fulfill request ✅
+      c ->> b: PUB ./~sender/fs:00/.transfer
+      activate c
+        note left of b: FileTransferRequest ✉️
+        b --) s:
+        activate s
+          s ->> b: PUB ./~recver/fr:99/accepted
+        note right of b: ✉️ FileTransferAccepted
+        b --) c:
+        deactivate s
+      deactivate c
+    end
+  end
+
+
+  rect rgba(64,64,48,0.5)
+    note right of s: 8️⃣ Sender transfers file in chunks
+
+    loop until entire file length sent
+      s ->> b: PUB ./~recver/fr:99/chunks/<index>-<hash>
+      note right of b: 💾 FileChunk
+      b --) c:
+    end
+
+    c ->> b: UNSUB ./~recver/fr:99/chunks/+
+    deactivate c
+
+    note left of c: (No longer receiving fr:99)
+
+    note right of s: ⌛ File TTL expires so Sender can stop serving 00
+    s ->> b: UNSUB ./~sender/fs:00/.get-metadata
+    s ->> b: UNSUB ./~sender/fs:00/.transfer
+    deactivate s
+    note right of s: (No longer serving fs:00)
+  end
+```
+-->
+<hr>
+<h2 id="topics">Topics</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Publisher</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;fsd&gt;/.get-metadata</code></td>
+<td>Receiver</td>
+<td><code>MetadataRequest</code></td>
+</tr>
+<tr>
+<td><code>&lt;fsd&gt;/metadata</code></td>
+<td>Sender</td>
+<td><code>MetadataResponse</code></td>
+</tr>
+<tr>
+<td><code>&lt;fsd&gt;/.transfer</code></td>
+<td>Receiver</td>
+<td><code>TransferRequest</code></td>
+</tr>
+<tr>
+<td><code>&lt;frd&gt;/accepted</code></td>
+<td>Sender</td>
+<td><code>TransferAccepted</code></td>
+</tr>
+<tr>
+<td><code>&lt;frd&gt;/rejected</code></td>
+<td>Sender</td>
+<td><code>TransferRejected</code></td>
+</tr>
+<tr>
+<td><code>&lt;frd&gt;/chunks/&lt;index&gt;-&lt;hash&gt;</code></td>
+<td>Sender</td>
+<td>Raw binary</td>
+</tr>
+</tbody>
+</table>
+<p>Topics prefixed with <code>.</code> are <strong>request topics</strong>: a participant publishes to them and expects a response on the corresponding non-dotted topic.</p>
+<table>
+<thead>
+<tr>
+<th>Request topic</th>
+<th>Response topic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;fsd&gt;/.get-metadata</code></td>
+<td><code>&lt;fsd&gt;/metadata</code></td>
+</tr>
+<tr>
+<td><code>&lt;fsd&gt;/.transfer</code></td>
+<td><code>&lt;frd&gt;/accepted</code> or <code>&lt;frd&gt;/rejected</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="payloads">Payloads</h2>
+<p>All negotiation payloads use the standard SmarterLink JSON envelope.</p>
+<h3 id="metadatarequest"><code>MetadataRequest</code></h3>
+<p>No fields beyond <code>version</code>. The receiver publishes this to request file metadata from the sender.</p>
+<h3 id="metadataresponse"><code>MetadataResponse</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>filename</code></td>
+<td>string</td>
+<td>no</td>
+<td>Original filename, if known</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>Total file size in bytes</td>
+</tr>
+<tr>
+<td><code>ttl</code></td>
+<td>integer</td>
+<td>no</td>
+<td>Seconds the sender will continue serving this FSD. Expiry prevents new transfers from starting but does not abort a transfer already in progress.</td>
+</tr>
+<tr>
+<td><code>maxSupportedChunkSize</code></td>
+<td>integer</td>
+<td>no</td>
+<td>Maximum chunk size in bytes the sender can produce. Receivers MUST NOT request a larger chunk size.</td>
+</tr>
+<tr>
+<td><code>supportedHashFunctions</code></td>
+<td>string[]</td>
+<td>yes</td>
+<td>Hashing function identifiers supported by the sender. May be empty if the sender cannot perform hashing.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="transferrequest"><code>TransferRequest</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>responseTopicBase</code></td>
+<td>string</td>
+<td>yes</td>
+<td>Full MQTT topic base of the receiver's FRD (used as <code>&lt;frd&gt;</code> in all response and chunk topics)</td>
+</tr>
+<tr>
+<td><code>chunkSize</code></td>
+<td>integer</td>
+<td>yes</td>
+<td>Requested chunk size in bytes</td>
+</tr>
+<tr>
+<td><code>hashingFunction</code></td>
+<td>string</td>
+<td>no</td>
+<td>Hashing function to use for per-chunk and whole-file integrity verification. This can be included when the sender advertises any supported functions. If omitted, no hashing is performed.</td>
+</tr>
+<tr>
+<td><code>startChunkIndex</code></td>
+<td>integer</td>
+<td>no</td>
+<td>Zero-based index of the first chunk to send (default: 0). Used to resume an interrupted transfer.</td>
+</tr>
+<tr>
+<td><code>chunkCount</code></td>
+<td>integer</td>
+<td>no</td>
+<td>Number of chunks to send. If absent, all chunks from <code>startChunkIndex</code> to end of file are sent.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="transferrejected"><code>TransferRejected</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td>string</td>
+<td>yes</td>
+<td>Human-readable description of why the request was rejected (e.g. <code>&quot;unsupported chunk size&quot;</code>, <code>&quot;FSD expired&quot;</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="transferaccepted"><code>TransferAccepted</code></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>integer</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>hashes</code></td>
+<td>Hash[]</td>
+<td>yes</td>
+<td>Whole-file hash(es). Must include an entry for the algorithm specified in <code>TransferRequest.hashingFunction</code>, if one was provided. May include additional algorithms. Empty array if no hashing function was requested.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Hash object:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hashingFunction</code></td>
+<td>string</td>
+<td>yes</td>
+<td>The algorithm identifier (e.g. <code>SHA-256</code>, <code>MD5</code>)</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>string</td>
+<td>yes</td>
+<td>Lowercase hex-encoded hash value</td>
+</tr>
+</tbody>
+</table>
+<h3 id="file-chunks">File Chunks</h3>
+<p>Each chunk is published as <strong>raw binary</strong> (no JSON envelope) to:</p>
+<pre><code>&lt;frd&gt;/chunks/&lt;index&gt;-&lt;hash&gt;
+</code></pre>
+<p>where <code>&lt;index&gt;</code> is the zero-based chunk index and <code>&lt;hash&gt;</code> is the lowercase hex-encoded hash of that chunk's bytes using the algorithm from <code>TransferRequest.hashingFunction</code>. If no hashing function was requested, <code>&lt;hash&gt;</code> is an empty string and the topic ends with <code>-</code>.</p>
+<p>When hashing is in use, receivers are advised to verify the per-chunk hash and discard any chunk whose hash does not match. Discarded chunks can be re-fetched by issuing a new <code>TransferRequest</code> to the same FSD, using <code>startChunkIndex</code> and <code>chunkCount</code> to target only the missing chunks.</p>
+<hr>
+<h2 id="end-of-transfer-detection">End-of-Transfer Detection</h2>
+<p>End of transfer is implicit. The receiver computes the expected chunk count from the information exchanged during negotiation:</p>
+<pre><code>expectedChunks = ⌈size / chunkSize⌉
+</code></pre>
+<p>adjusted by <code>startChunkIndex</code> and <code>chunkCount</code> from the <code>TransferRequest</code> if present. The transfer is complete when all expected chunks have been received. When hashing is in use, receivers are advised to verify the reassembled file against the whole-file hash provided in <code>TransferAccepted</code>.</p>
+<hr>
+<h2 id="chunk-publishing">Chunk Publishing</h2>
+<p>Senders MUST publish chunks in sequential index order. Receivers MUST tolerate out-of-order delivery, as sequential delivery is not guaranteed by the broker.</p>
+<p>Senders SHOULD rate-limit chunk publishing to avoid saturating the broker. No specific rate is mandated; implementations should make the limit configurable.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/YvesConanDeliverables/SmarterLink-DotNet/blob/yc-documentation-experiments/docs/static/specs/file-transfer-protocol.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
